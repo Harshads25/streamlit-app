@@ -20,7 +20,7 @@ def load_price_data(file_path):
     return df
 
 # Simulated user credentials (replace with real authentication system for production)
-users = {"arthex@.com": "Arthex123"}
+users = {"arthex@gmail.com": "Arthex123"}
 
 # Login page
 def login():
@@ -84,9 +84,9 @@ def login():
 # Main dashboard function
 def show_dashboard():
     # File path for price data, background, and logo
-    price_data_file_path = "/Users/harshadshingde/Downloads/excel_maharastra.csv"
-    logo_path = "/Users/harshadshingde/Desktop/SIH/Arthex.png"
-    background_path = "/Users/harshadshingde/Desktop/SIH/Bagraoud.jpg"
+    price_data_file_path = "/Users/harshadshingde/Desktop/SIH/streamlit_app/excel_maharastra.csv"
+    logo_path = "/Users/harshadshingde/Desktop/SIH/streamlit_app/Arthex.png"
+    background_path = "/Users/harshadshingde/Desktop/SIH/streamlit_app/Bagraoud.jpg.avif"
 
     # Load price data
     price_df = load_price_data(price_data_file_path)
