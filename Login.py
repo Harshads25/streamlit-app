@@ -187,6 +187,56 @@ def show_dashboard():
 
         plot_container.plotly_chart(fig)
 
+    elif tabs == "Cumulative Rain Effect on Price Trends":
+        st.title("Cumulative Rain Effect on Price Trends")
+
+        # Fetch weather data
+        st.write("Fetching weather data...")
+        weather_df = fetch_weather_data()
+
+        # Calculate cumulative rainfall
+        weather_df['cumulative_rain'] = weather_df['rain_sum'].cumsum()
+
+        # Dropdown for commodity
+        commodity = st.selectbox(
+            "Select Commodity to View Price Trends",
+            options=[col for col in price_df.columns if col != 'Date'],
+            index=0
+        )
+
+        # Display cumulative rain effect on price graph
+        st.write("### Cumulative Rainfall and Price Data")
+        plot_container = st.empty()
+
+        combined_df = pd.DataFrame({
+            'Date': weather_df['time'],
+            'Cumulative Rainfall': weather_df['cumulative_rain'],
+            'Price': price_df[commodity].values[:len(weather_df)]
+        })
+
+        # Plot with secondary y-axis
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=combined_df['Date'], y=combined_df['Price'], mode='lines', name=f'Price of {commodity}', yaxis="y1", line=dict(color='blue')))
+        fig.add_trace(go.Scatter(x=combined_df['Date'], y=combined_df['Cumulative Rainfall'], mode='lines', name="Cumulative Rainfall", yaxis="y2", line=dict(color='red')))
+
+        fig.update_layout(
+            width=1200, height=600, title='Cumulative Rainfall and Price Trends',
+            xaxis_title='Date',
+            yaxis=dict(title='Price', titlefont=dict(color='blue'), tickfont=dict(color='blue')),
+            yaxis2=dict(title='Cumulative Rainfall (mm)', titlefont=dict(color='red'), tickfont=dict(color='red'), overlaying='y', side='right'),
+            title_x=0.5
+        )
+
+        plot_container.plotly_chart(fig)
+
+        # Animation logic
+        if st.session_state.animation_running:
+            for i in range(1, len(combined_df)):
+                fig.data[0].y = combined_df['Price'][:i]
+                fig.data[1].y = combined_df['Cumulative Rainfall'][:i]
+                plot_container.plotly_chart(fig)
+                time.sleep(0.1 / animation_speed)
+
 # Run login or dashboard based on session state
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
